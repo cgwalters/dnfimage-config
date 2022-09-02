@@ -1,0 +1,7 @@
+
+# https://pagure.io/fedora-kickstarts/blob/main/f/fedora-cloud-base.ks#_37
+enable cloud-init.service
+enable cloud-init.target
+enable cloud-init-local.service
+enable cloud-config.service
+enable cloud-final.service

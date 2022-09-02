@@ -12,4 +12,6 @@ repos:
   - fedora
   - fedora-updates
 
-include: manifests/fedora-coreos.yaml
+include:
+  - manifests/fedora-coreos.yaml
+  - manifests/dnfimage-cloud.yaml

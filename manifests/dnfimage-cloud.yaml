@@ -1,0 +1,16 @@
+# changes for "dnf image" here
+
+# Enable cloud-init
+packages:
+  - dnf  # For now, we'll pull in all of it and rely on cliwrap
+  # Install this by default
+  - google-compute-engine-guest-configs
+ostree-layers:
+  - overlay/55dnfimage-cloud
+
+# Enable `dnf` wrapper
+cliwrap: true
+
+# We want to track latest rpm-ostree git main
+repos:
+  - copr:copr.fedorainfracloud.org:group_CoreOS:continuous

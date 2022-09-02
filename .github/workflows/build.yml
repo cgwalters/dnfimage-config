@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+env:
+  REGISTRY: ghcr.io
+  # For now we only build a GCP image
+  IMAGE_NAME: cgwalters/dnfimage-gcp
+  COSA_NO_KVM: "1"  # https://github.com/actions/runner-images/issues/183
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/coreos-assembler/coreos-assembler:latest
+      options: "--user root --privileged -v /srv:/srv"
+    steps:
+      - uses: actions/checkout@v3
+        # https://github.com/actions/checkout/issues/760
+      - name: Mark git checkout as safe
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Code lints
+        run: ./ci/validate
+      - name: Login to registry
+        run: podman login --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
+        if: github.event_name == 'push'
+      - name: Build ostree container
+        run: ./ci/build.sh
+      - name: Upload
+        run: cd /srv/dnfimage && cosa push-container ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        if: github.event_name == 'push'
+      - name: Build GCP
+        run: ./ci/build-gcp.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: gcp.tar.gz
+          path: /srv/dnfimage/builds/latest/x86_64/gcp-image*.tar.gz
+        if: github.event_name == 'push'
