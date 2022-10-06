@@ -12,7 +12,7 @@ Instead, there are cloud-specific builds and disk images.
 
 For the moment, only GCE is tested, and the build uses
 `google-guest-agent`.  See for example
-https://pagure.io/fedora-kickstarts/blob/main/f/fedora-cloud-base-gcp.ks
+https://pagure.io/fedora-kickstarts/blob/main/f/fedora-cloud-base.ks
 
 # Using
 

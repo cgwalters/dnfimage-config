@@ -9,8 +9,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # For now we only build a GCP image
-  IMAGE_NAME: cgwalters/dnfimage-gcp
+  # For now we only build a cloud-init image
+  IMAGE_NAME: cgwalters/dnfimage-cloud
   COSA_NO_KVM: "1"  # https://github.com/actions/runner-images/issues/183
 
 jobs:
@@ -36,11 +36,11 @@ jobs:
       - name: Upload
         run: cd /srv/dnfimage && cosa push-container ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      - name: Build GCP
-        run: ./ci/build-gcp.sh
+      - name: Build image
+        run: cd /srv/dnfimage && ./ci/build-cloud-image.sh
         if: github.event_name == 'workflow_dispatch'
       - uses: actions/upload-artifact@v3
         with:
-          name: gcp.tar.gz
-          path: /srv/dnfimage/builds/latest/x86_64/gcp-image*.tar.gz
+          name: dnfimage-cloud.qcow2.zst
+          path: /srv/dnfimage/builds/latest/x86_64/dnfimage-cloud*.tar.zst
         if: github.event_name == 'workflow_dispatch'

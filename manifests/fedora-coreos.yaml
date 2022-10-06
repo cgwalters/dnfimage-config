@@ -5,14 +5,10 @@
 ref: fedora/${basearch}/coreos/${stream}
 rojig:
   license: MIT
-  name: fedora-coreos
-  summary: Fedora CoreOS ${stream}
+  name: dnfimage
+  summary: Fedora dnf-image ${stream}
 
-add-commit-metadata:
-  fedora-coreos.stream: ${stream}
-
-
-include: fedora-coreos-base.yaml
+  qinclude: fedora-coreos-base.yaml
 conditional-include:
   - if: prod == false
     # long-term, would be good to support specifying a nested TreeComposeConfig
@@ -35,7 +31,7 @@ lockfile-repos:
   - fedora-coreos-pool
 
 packages:
-  - fedora-release-coreos
+  - fedora-release
   - fedora-repos-ostree
   # fedora-repos-modular was converted into its own subpackage in f33
   # Continue to include it in case users want to use it.
@@ -47,8 +43,6 @@ packages:
   - moby-engine
   # Already pulled in by moby-engine, but let's be explicit. Typhoon uses it.
   - containerd
-  # Updates
-  - zincati
   # Include and set the default editor
   - nano nano-default-editor
 

@@ -4,4 +4,4 @@
 include: image-base.yaml
 
 deploy-via-container: true
-container-imgref: ostree-unverified-registry:ghcr.io/cgwalters/dnfimage-gcp
+container-imgref: ostree-unverified-registry:ghcr.io/cgwalters/dnfimage-cloud
