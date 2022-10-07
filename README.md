@@ -1,35 +1,55 @@
 # Experiment in container-native Fedora derivative 
 
 This repository demonstrates 
-https://fedoraproject.org/wiki/Changes/OstreeNativeContainer
-combined with https://github.com/coreos/rpm-ostree/issues/2883
+https://fedoraproject.org/wiki/Changes/OstreeNativeContainerStable
 
-The code here was originally forked from
-https://github.com/coreos/fedora-coreos-config/
-but it must be emphasized:
-*The resulting system does not use Ignition* (by default).
-Instead, there are cloud-specific builds and disk images.
+Two things are built from here:
 
-For the moment, only GCE is tested, and the build uses
-`google-guest-agent`.  See for example
-https://pagure.io/fedora-kickstarts/blob/main/f/fedora-cloud-base.ks
+- A cloud-init guest qcow2 (usable in systems like OpenStack, Kubevirt, via libvirt, or AWS etc.)
+- A container image
 
-# Using
+# Using the disk image
 
-[Boot an instance in GCP](https://url.corp.redhat.com/7606f9c), and log in however you prefer; for example
-using the GUI console's "SSH" tab.
+If you're familiar with a system like OpenStack or KubeVirt, you can upload
+the qcow2 and use it in the same way as any other cloud-init guest image.
+
+To test things out on a system with libvirt (could be a Linux desktop or
+standalone server), the [libvirt cloud init support](https://blog.wikichoon.com/2020/09/virt-install-cloud-init.html)
+works.
+
+## Using the container image
+
+The same OS image is *also* a container image, available at
+`ghcr.io/cgwalters/dnfimage-cloud`, so you can run it via podman/docker/Kubernetes/etc.
+
+It's not expected to use this as an "application" base image; while it
+would work to `dnf -y install httpd` in this and run it as e.g.
+a Kubernetes pod, that's not actually the intended use.  
+
+For now, start by booting the VM image.
 
 # Things to try
 
 ## dnf upgrade
 
 Type `dnf upgrade` - notice it *fetches a container image* to perform upgrades;
-it's not doing package-by-package upgrades.  This is using 
-https://fedoraproject.org/wiki/Changes/OstreeNativeContainer
+it's not doing package-by-package upgrades.  We're using [skopeo](https://github.com/containers/skopeo/)
+to *fetch* container images, but we're not actually running the OS as a container
+in any way.
 
-Because this is "backed" by rpm-ostree, the updated image is queued for the next
-boot; you can however use `rpm-ostree apply-live` today (this still needs
-a `dnf` frontend.)
+(Incidentally, today this repository tracks [a COPR](https://copr.fedorainfracloud.org/coprs/g/CoreOS/continuous/)
+ tracking git main of several projects, so updates are frequent)
+
+The system you're running is actually a [rpm-ostree](https://github.com/coreos/rpm-ostree/)
+system - we've just swapped out about half of the "ostree stuff" for
+a focus instead on fetching container images.
+
+But this transition was designed carefully to keep the "good parts" of
+rpm-ostree; we haven't done a complete rewrite (in fact, all of this
+container functionality is purely additive today).
+
+As the message says, you can `systemctl reboot` or `dnf image apply-live`
+as you prefer.
 
 ## Deriving custom builds as containers
 
@@ -53,7 +73,7 @@ Once you have your custom dervied OS image, on the node run:
 $ dnf image rebase --experimental --no-signature-verification $image
 ```
 
-Then either boot into it `reboot` or `rpm-ostree apply-live`.
+Then either boot into it `reboot` or `dnf image apply-live`.
 
 Then, try modifying your container - add a new package, or better - remove
 a package in your Dockerfile.  Then have your container rebuilt and repushed,

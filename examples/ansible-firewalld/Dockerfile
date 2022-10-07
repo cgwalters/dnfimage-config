@@ -1,6 +1,6 @@
 # This example uses Ansible to configure firewalld to set up a node-local firewall suitable as recommended for use as an OpenShift 4 worker.
 # However, this is intended to generalize to using Ansible as well as firewalld for generic tasks.
-FROM ghcr.io/cgwalters/dnfimage-gcp
+FROM ghcr.io/cgwalters/dnfimage-cloud
 
 ADD firewall.yml .
 

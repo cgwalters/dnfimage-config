@@ -8,7 +8,7 @@ rojig:
   name: dnfimage
   summary: Fedora dnf-image ${stream}
 
-  qinclude: fedora-coreos-base.yaml
+include: fedora-coreos-base.yaml
 conditional-include:
   - if: prod == false
     # long-term, would be good to support specifying a nested TreeComposeConfig
