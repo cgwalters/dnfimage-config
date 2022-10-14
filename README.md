@@ -17,6 +17,9 @@ To test things out on a system with libvirt (could be a Linux desktop or
 standalone server), the [libvirt cloud init support](https://blog.wikichoon.com/2020/09/virt-install-cloud-init.html)
 works.
 
+A demo build of the disk image is here:
+https://fedorapeople.org/~walters/dnfimage-demo/dnfimage-cloud-36.20221014.dev.0.qcow2.gz
+
 ## Using the container image
 
 The same OS image is *also* a container image, available at
