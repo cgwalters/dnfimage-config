@@ -32,10 +32,7 @@ jobs:
       - name: Prepare build
         run: ./ci/buildprep.sh
       - name: Build ostree container
-        run: ./ci/build.sh
-      - name: Upload
-        run: cd /srv/dnfimage && cosa push-container ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: ./ci/build.sh ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
       - name: Build image
         run: cd /srv/dnfimage && ./src/config/ci/build-cloud-image.sh
         if: github.event_name == 'workflow_dispatch'
