@@ -14,3 +14,9 @@ cliwrap: true
 # We want to track latest rpm-ostree git main
 repos:
   - copr:copr.fedorainfracloud.org:group_CoreOS:continuous
+
+postprocess:
+  - |
+    #!/bin/bash
+    rm -vf /usr/lib/motd.d/tracker.motd
+    echo "This is a demo system for https://fedoraproject.org/wiki/Changes/OstreeNativeContainerStable" > /usr/lib/motd.d/info.motd
